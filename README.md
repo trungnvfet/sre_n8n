@@ -40,11 +40,11 @@ $ docker-compose up -d
 
 <i>screenshot 2: activation screenshot</i>
 
+#### - Workflow Results
+
 <img src="./image/result_workflow_ssl.png" width=500>
 
 <i>screenshot 3: SSL checking screenshot</i>
-
-#### - Workflow Results
 
 [Back To The Top](#table-of-content)
 
