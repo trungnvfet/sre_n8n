@@ -19,6 +19,11 @@ This projects provide more infomation with the n8n automation tools.
 ## Implementation
 #### P1 - How to deploy n8n with postgresql (n8n#1)
 
+You need to change some secrets in the `docker-compose.yml` before run following command.
+
+```bash
+$ docker-compose up -d
+```
 [Back To The Top](#table-of-content)
 
 #### P2 - Templates of n8n mechanism (n8n#2)
@@ -29,11 +34,15 @@ This projects provide more infomation with the n8n automation tools.
 #### - Deployment Results
 <img src="./image/results_deploy.png" width=500>
 
-<i>the main portal screenshot</i>
+<i>screenshot 1: the main portal screenshot</i>
 
 <img src="./image/activation.png" width=500>
 
-<i>activation screenshot</i>
+<i>screenshot 2: activation screenshot</i>
+
+<img src="./image/result_workflow_ssl.png" width=500>
+
+<i>screenshot 3: SSL checking screenshot</i>
 
 #### - Workflow Results
 
