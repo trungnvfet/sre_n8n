@@ -1,0 +1,149 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"email\": \"{{\"jadooo\" + $today.format('yyyyMMddHHMM') + \"@hotmail.com.vn\"}}\",\n  \"product\": \"expert\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -540,
+        -60
+      ],
+      "id": "c014ac2c-c13d-407c-963c-efc2dc9ad819",
+      "name": "Build Input Data"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.tenable.com/evaluations/api/v2/trials",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"skipContactLookup\": \"true\",\n    \"product\": \"{{ $json.product }}\",\n    \"first_name\": \"molid\",\n    \"last_name\": \"hittle\",\n    \"email\": \"{{ $json.email }}\",\n    \"partnerId\": \"\",\n    \"phone\": \"078576372323\",\n    \"title\": \"Test\",\n    \"company\": \"HLSE\",\n    \"companySize\": \"10-49\",\n    \"pid\": \"\",\n    \"utm_source\": \"\",\n    \"utm_campaign\": \"\",\n    \"utm_medium\": \"\",\n    \"utm_content\": \"\",\n    \"utm_promoter\": \"\",\n    \"utm_term\": \"\",\n    \"alert_email\": \"\",\n    \"_mkto_trk\": \"\",\n    \"mkt_tok\": \"\",\n    \"lookbook\": \"\",\n    \"gclid\": \"\",\n    \"country\": \"US\",\n    \"region\": \"\",\n    \"zip\": \"\",\n    \"apps\": [\"{{ $json.product }}\"],\n    \"tempProductInterest\": \"Tenable Nessus {{ $json.product }}\",\n    \"gtm\": {\n        \"category\": \"Nessus {{ $json.product }} Eval\"\n    },\n    \"queryParameters\": \"\",\n    \"referrer\": \"\"\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -320,
+        -60
+      ],
+      "id": "5f80d9da-d9ad-41a3-bcb9-55d0bb49e64c",
+      "name": "Generate Keys",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "months",
+              "monthsInterval": 3,
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -760,
+        -60
+      ],
+      "id": "aec9fc59-d1f8-4f02-b083-82a702e8d848",
+      "name": "3 Monthly"
+    },
+    {
+      "parameters": {
+        "chatId": "-1002355442741",
+        "text": "=NESSUS code: {{ $json.trial.code }}\nNESSUS email: {{ $json.contact.email }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "disable_web_page_preview": true,
+          "parse_mode": "MarkdownV2"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        60,
+        -80
+      ],
+      "id": "e1559169-b1ba-49eb-b6f7-c58c6c2ab39b",
+      "name": "Telegram",
+      "webhookId": "f4c0be3d-9706-473a-9d1c-fef1cab2eb9e",
+      "credentials": {
+        "telegramApi": {
+          "id": "VlNChS3b6B4FcqCu",
+          "name": "@OmoPaiErrorBot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "command": "=service nessusd stop && service nessusd start && /opt/nessus/sbin/nessuscli fetch --register {{ $json.trial.code }} && /opt/nessus/sbin/nessuscli fetch --check"
+      },
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        60,
+        -320
+      ],
+      "id": "0cb794c2-635a-4cec-9575-5e069cec51ea",
+      "name": "Deploy to Nessus VMs",
+      "credentials": {
+        "sshPassword": {
+          "id": "Kx97KDHBE0i4YM2t",
+          "name": "SSH_9.26"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Build Input Data": {
+      "main": [
+        [
+          {
+            "node": "Generate Keys",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Keys": {
+      "main": [
+        [
+          {
+            "node": "Deploy to Nessus VMs",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "3 Monthly": {
+      "main": [
+        [
+          {
+            "node": "Build Input Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a4603d5d7570e7abff492c374d36499bd2a89e9879e509b377c17ed78a340f9f"
+  }
+}
