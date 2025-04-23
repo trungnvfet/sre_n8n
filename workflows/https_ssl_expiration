@@ -1,0 +1,371 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1gL2y0FFvCZVVz948chc7w9ep9bINWE-lGP10oFfIdYI",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "1247358052",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "expire_date": "={{ $json.result.valid_till }}",
+            "duration (days)": "={{ $json.result.days_left }}",
+            "id": "={{ $('Fetch URLs').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items",
+              "displayName": "items",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "start_date",
+              "displayName": "start_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "expire_date",
+              "displayName": "expire_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "duration (days)",
+              "displayName": "duration (days)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "122f9317-d897-4cb5-a098-e7dc6bc1ea9b",
+      "name": "URLs to Monitor",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 4.5,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "dIIgzKvSts8QJ2Zs",
+          "name": "GSheets_dev@gmai.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1gL2y0FFvCZVVz948chc7w9ep9bINWE-lGP10oFfIdYI",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "1247358052",
+          "mode": "id"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "items",
+              "lookupValue": "ssl"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "35c7033c-677c-4964-98d8-1839a7990b94",
+      "name": "Fetch URLs",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        -620,
+        200
+      ],
+      "typeVersion": 4.5,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "dIIgzKvSts8QJ2Zs",
+          "name": "GSheets_dev@gmai.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://ssl-checker.io/api/v1/check/{{ $json.url.replace(/^https?:\\/\\//, \"\").replace(/\\/$/, \"\") }}",
+        "options": {}
+      },
+      "id": "81dcf7f6-b085-4ac6-aab8-2672cfdfbf49",
+      "name": "Check SSL",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -360,
+        200
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "content": "Uses SSL-Checker.io to verify the SSL certificate of each URL. Fetches details like the host, validity period, and days remaining until expiry.",
+        "height": 284
+      },
+      "id": "2951460c-f60a-48a9-ba1e-2dea38608666",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -420,
+        80
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "fromEmail": "tech@gmai.com",
+        "toEmail": "dev@gmai.com",
+        "subject": "[P. CNTT] Báo cáo dịch vụ SSL của hệ thống",
+        "text": "=",
+        "html": "={{ $json.html }}",
+        "additionalFields": {
+          "ccAddresses": "example@gmai.com"
+        }
+      },
+      "type": "n8n-nodes-base.mailjet",
+      "typeVersion": 1,
+      "position": [
+        580,
+        120
+      ],
+      "id": "d7fa94a9-98b0-444e-8336-4d6e540482ea",
+      "name": "Mailjet",
+      "credentials": {
+        "mailjetEmailApi": {
+          "id": "XDz6rs7UTr1XwKhh",
+          "name": "Mailjet_tech@gmai.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        220,
+        260
+      ],
+      "id": "6b54323a-a9cd-4cf8-b8ed-8b3f8fecf93d",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Lấy dữ liệu từ input\nconst inputData = $input.all().map(item => item.json.data);\nconst inputData2 = $input.all().map(item => item.json);\n\n// Kiểm tra dữ liệu\nif (!inputData || inputData[0].length === 1) {\n  return [{ json: { html: inputData[0] } }];\n}\n\n// URL hình ảnh minh họa\nconst imageUrl = \"https://ci3.googleusercontent.com/mail-sig/AIorK4wg0DqhSxmFbJQ-R_9rMVKeQrgf3H8F7r2WJd8S6_9uBk4xEA9s-LyRk41S9KNABDMh2gsSC5c\";\n\n// Tạo template HTML\nlet htmlContent = `\n<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Báo Cáo Hệ Thống</title>\n  <style>\n    body { font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; background-color: #f3f4f6; }\n    .container { max-width: 800px; margin: 20px auto; background-color: #ffffff; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden; }\n    .header { background: linear-gradient(135deg, #6b7280, #a78bfa); color: #ffffff; padding: 30px; text-align: center; }\n    .header h1 { margin: 0; font-size: 28px; font-weight: 700; text-transform: uppercase; }\n    .content { padding: 25px; text-align: center; }\n    .content p { font-size: 16px; color: #444; line-height: 1.6; margin: 15px 0; }\n    .image img { max-width: 100%; height: auto; max-height: 180px; border-radius: 10px; }\n    table { width: 100%; border-collapse: collapse; margin: 20px 0; }\n    th, td { padding: 12px; border: 1px solid #e5e7eb; text-align: left; }\n    th { background-color: #f9fafb; color: #4b5e9e; font-weight: bold; }\n    .footer { background-color: #f9fafb; padding: 15px; text-align: center; font-size: 12px; color: #6b7280; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>Báo Cáo Hệ Thống</h1>\n    </div>\n    <div class=\"content\">\n      <div class=\"image\">\n        <img src=\"${imageUrl}\" alt=\"System Report\">\n      </div>\n      <table>\n        <thead>\n          <tr>\n            <th>STT</th>\n            <th>DOMAIN</th>\n            <th>Ngày Tạo</th>\n            <th>Ngày Hết Hạn</th>\n            <th>Ngày Còn Lại</th>\n          </tr>\n        </thead>\n        <tbody>\n`;\n\n// Ghép dữ liệu từ danh sách vào bảng\nfor (let i = 0; i < inputData[0].length; i++) {\n  const item = inputData[0][i];\n  htmlContent += `\n          <tr>\n            <td>${i}</td>\n            <td>${item.host}</td>\n            <td>${item.result.valid_from}</td>\n            <td>${item.result.valid_till}</td>\n            <td>${item.result.days_left}</td>\n          </tr>\n  `;\n}\n\n// Kết thúc template\nhtmlContent += `\n        </tbody>\n      </table>\n    </div>\n    <div class=\"footer\">\n      <p>Email này được tạo từ hệ thống tự động.</p>\n    </div>\n  </div>\n</body>\n</html>\n`;\n\n// Trả về nội dung HTML\nreturn [{ json: { html: htmlContent } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        420,
+        120
+      ],
+      "id": "0d353b2f-88e2-4bad-a2d2-d4bb9d224875",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ee6e2ce8-569a-4f1f-91b5-2c55f605a16b",
+              "operator": {
+                "type": "number",
+                "operation": "lte"
+              },
+              "leftValue": "={{ $json.result.days_left }}",
+              "rightValue": 30
+            },
+            {
+              "id": "295e634e-0787-4110-a241-7e22cf549d88",
+              "leftValue": "={{ $json.result.days_left }}",
+              "rightValue": 10,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "38d98652-4394-491f-816d-a5f1524d1fbe",
+      "name": "Rule(10< ssl <30 days)",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -40,
+        260
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "id": "2a81fa55-0c8d-4ba0-b86f-f0f0fc31edcf",
+      "name": "Daily Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        -880,
+        200
+      ],
+      "typeVersion": 1.2
+    }
+  ],
+  "connections": {
+    "Fetch URLs": {
+      "main": [
+        [
+          {
+            "node": "Check SSL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check SSL": {
+      "main": [
+        [
+          {
+            "node": "URLs to Monitor",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Rule(10< ssl <30 days)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Mailjet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rule(10< ssl <30 days)": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a4603d5d7570e7abff492c374d36499bd2a89e9879e509b377c17ed78a340f9f"
+  }
+}
